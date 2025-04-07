@@ -8,20 +8,20 @@ using namespace std;
 
 class ParkedCar {
 private:
-    std::string make;
-    std::string model;
-    std::string color;
-    std::string licenseNumber;
+    string make;
+    string model;
+    string color;
+    string licenseNumber;
     int minutesParked;
 
 public:
-    ParkedCar(std::string mk, std::string mdl, std::string clr, std::string lic, int mins)
+    ParkedCar(string mk, string mdl, string clr, string lic, int mins)
         : make(mk), model(mdl), color(clr), licenseNumber(lic), minutesParked(mins) {}
 
-    std::string getMake() const { return make; }
-    std::string getModel() const { return model; }
-    std::string getColor() const { return color; }
-    std::string getLicenseNumber() const { return licenseNumber; }
+    string getMake() const { return make; }
+    string getModel() const { return model; }
+    string getColor() const { return color; }
+    string getLicenseNumber() const { return licenseNumber; }
     int getMinutesParked() const { return minutesParked; }
 };
 
@@ -37,8 +37,8 @@ public:
 class ParkingTicket {
 private:
     ParkedCar car;
-    std::string officerName;
-    std::string officerBadge;
+    string officerName;
+    string officerBadge;
     double fine;
 
     void calculateFine(int illegalMinutes) {
@@ -50,19 +50,19 @@ private:
     }
 
 public:
-    ParkingTicket(const ParkedCar& c, std::string name, std::string badge, int illegalMins)
+    ParkingTicket(const ParkedCar& c, string name, string badge, int illegalMins)
         : car(c), officerName(name), officerBadge(badge) {
         calculateFine(illegalMins);
     }
 
     void printTicket() const {
-        std::cout << "\n=== PARKING TICKET ===\n"
+        cout << "\n=== PARKING TICKET ===\n"
                   << "Vehicle Information:\n"
                   << "Make: " << car.getMake() << "\n"
                   << "Model: " << car.getModel() << "\n"
                   << "Color: " << car.getColor() << "\n"
                   << "License: " << car.getLicenseNumber() << "\n\n"
-                  << "Fine Amount: $" << std::fixed << std::setprecision(2) << fine << "\n\n"
+                  << "Fine Amount: $" << fixed << setprecision(2) << fine << "\n\n"
                   << "Issuing Officer: " << officerName << "\n"
                   << "Badge Number: " << officerBadge << "\n"
                   << "==================\n";
@@ -71,11 +71,11 @@ public:
 
 class PoliceOfficer {
 private:
-    std::string name;
-    std::string badgeNumber;
+    string name;
+    string badgeNumber;
 
 public:
-    PoliceOfficer(std::string n, std::string badge)
+    PoliceOfficer(string n, string badge)
         : name(n), badgeNumber(badge) {}
 
     ParkingTicket* patrol(const ParkedCar& car, const ParkingMeter& meter) {
@@ -106,7 +106,7 @@ int main() {
         ticket->printTicket();
         delete ticket;
     } else {
-        std::cout << "No parking violation.\n";
+        cout << "No parking violation.\n";
     }
     
     return 0;
