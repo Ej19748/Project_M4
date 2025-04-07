@@ -1,70 +1,109 @@
-        #include <iostream>
-        #include "Date.h"
 
-        using namespace std;
+#include <iostream>
 
-        int main() {
-            // Test cases as per requirements
-            cout << "1. Default constructor test:\n";
-            Date d1;
-            cout << d1.toString1() << "\n\n";
+using namespace std;
 
-            cout << "2. Constructor with parameters test:\n";
-            Date d2(2, 28, 2009);
-            cout << d2.toString2() << "\n\n";
+class ParkedCar {
+private:
+    string make;
+    string model;
+    string color;
+    string licenseNumber;
+    int minutesParked;
 
-            cout << "3. setDate() test:\n";
-            d1.setDate(3, 15, 2012);
-            cout << d1.toString3() << "\n\n";
+public:
+    ParkedCar(string mk, string mdl, string clr, string lic, int mins)
+        : make(mk), model(mdl), color(clr), licenseNumber(lic), minutesParked(mins) {}
 
-            cout << "4. Invalid date test (13/45/2018):\n";
-            d1.setDate(13, 45, 2018);
-            cout << d1.toString1() << "\n\n";
+    string getMake() const { return make; }
+    string getModel() const { return model; }
+    string getColor() const { return color; }
+    string getLicenseNumber() const { return licenseNumber; }
+    int getMinutesParked() const { return minutesParked; }
+};
 
-            cout << "5. Invalid date test (4/31/2000):\n";
-            d1.setDate(4, 31, 2000);
-            cout << d1.toString1() << "\n\n";
+class ParkingMeter {
+private:
+    int minutesPurchased;
 
-            cout << "6. Invalid date test (2/29/2009):\n";
-            d1.setDate(2, 29, 2009);
-            cout << d1.toString1() << "\n\n";
+public:
+    ParkingMeter(int mins) : minutesPurchased(mins) {}
+    int getMinutesPurchased() const { return minutesPurchased; }
+};
 
-            cout << "7. Date subtraction test 1:\n";
-            Date d3(4, 10, 2014);
-            Date d4(4, 18, 2014);
-            cout << "Days between " << d3 << " and " << d4 << ": " 
-                 << (d4 - d3) << "\n\n";
+class ParkingTicket {
+private:
+    ParkedCar car;
+    string officerName;
+    string officerBadge;
+    double fine;
 
-            cout << "8. Date subtraction test 2:\n";
-            d3.setDate(2, 2, 2006);
-            d4.setDate(11, 10, 2003);
-            cout << "Days between " << d3 << " and " << d4 << ": " 
-                 << (d3 - d4) << "\n\n";
-
-            cout << "9-11. Increment/Decrement tests:\n";
-            Date d5(2, 29, 2008);
-            cout << "Original: " << d5 << "\n";
-            cout << "After --: " << --d5 << "\n";
-            cout << "After ++: " << ++d5 << "\n";
-            cout << "After post--: " << d5-- << "\n";
-            cout << "Result: " << d5 << "\n";
-            cout << "After post++: " << d5++ << "\n";
-            cout << "Result: " << d5 << "\n\n";
-
-            cout << "12-14. Year boundary tests:\n";
-            Date d6(12, 31, 2024);
-            cout << "Original: " << d6 << "\n";
-            cout << "After post++: " << d6++ << "\n";
-            cout << "Result: " << d6 << "\n";
-            cout << "After post--: " << d6-- << "\n";
-            cout << "Result: " << d6 << "\n";
-            cout << "After pre++: " << ++d6 << "\n";
-            cout << "After pre--: " << --d6 << "\n\n";
-
-            cout << "15-16. Stream operator tests:\n";
-            Date d7;
-            cin >> d7;
-            cout << "Entered date: " << d7 << "\n";
-
-            return 0;
+    void calculateFine(int illegalMinutes) {
+        int illegalHours = (illegalMinutes + 59) / 60; // Round up to nearest hour
+        fine = 25.0; // First hour
+        if (illegalHours > 1) {
+            fine += (illegalHours - 1) * 10.0; // Additional hours
         }
+    }
+
+public:
+    ParkingTicket(const ParkedCar& c, string name, string badge, int illegalMins)
+        : car(c), officerName(name), officerBadge(badge) {
+        calculateFine(illegalMins);
+    }
+
+    void printTicket() const {
+        cout << "\n=== PARKING TICKET ===\n"
+             << "Vehicle Information:\n"
+             << "Make: " << car.getMake() << "\n"
+             << "Model: " << car.getModel() << "\n"
+             << "Color: " << car.getColor() << "\n"
+             << "License: " << car.getLicenseNumber() << "\n\n"
+             << "Fine Amount: $" << fixed << setprecision(2) << fine << "\n\n"
+             << "Issuing Officer: " << officerName << "\n"
+             << "Badge Number: " << officerBadge << "\n"
+             << "==================\n";
+    }
+};
+
+class PoliceOfficer {
+private:
+    string name;
+    string badgeNumber;
+
+public:
+    PoliceOfficer(string n, string badge)
+        : name(n), badgeNumber(badge) {}
+
+    ParkingTicket* patrol(const ParkedCar& car, const ParkingMeter& meter) {
+        int illegalMinutes = car.getMinutesParked() - meter.getMinutesPurchased();
+        if (illegalMinutes > 0) {
+            return new ParkingTicket(car, name, badgeNumber, illegalMinutes);
+        }
+        return nullptr;
+    }
+};
+
+int main() {
+    // Create a parked car that has been parked for 125 minutes
+    ParkedCar car("Toyota", "Camry", "Blue", "ABC123", 125);
+    
+    // Create a parking meter with 60 minutes purchased
+    ParkingMeter meter(60);
+    
+    // Create a police officer
+    PoliceOfficer officer("John Smith", "B12345");
+    
+    // Have the officer patrol and check the car
+    ParkingTicket* ticket = officer.patrol(car, meter);
+    
+    // If a ticket was issued, print it
+    if (ticket != nullptr) {
+        ticket->printTicket();
+        delete ticket;
+    } else {
+        cout << "No parking violation.\n";
+    }
+
+    return 0;
+}
