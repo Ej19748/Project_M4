@@ -85,8 +85,8 @@ public:
     }
 };
 
-// Main function to demonstrate the classes
-int main() {
+// Function to demonstrate the parking classes
+void demoParking() {
     // Create a parked car that has been parked for 125 minutes
     ParkedCar car("Toyota", "Camry", "Blue", "ABC123", 125);
     
@@ -106,6 +106,4 @@ int main() {
     } else {
         cout << "No parking violation.\n";
     }
-    
-    return 0;
 }
